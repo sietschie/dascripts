@@ -1,0 +1,1 @@
+find /home/goering/Downloads/MSRC_ObjCategImageDatabase_v2/GroundTruth/ -name *.bmp -exec ./MSCR_to_Yaml.py {} \;
