@@ -1,1 +1,5 @@
 find /home/goering/Downloads/MSRC_ObjCategImageDatabase_v2/GroundTruth/ -name *.bmp -exec ./MSCR_to_Yaml.py {} \;
+
+comm -1 -2  cats.txt ../../fs-SegmentationClass.txt > ../../fs-cats.txt
+grep -v -- -1 cat_trainval.txt | cut -d " " -f 1 > cats.txt
+
