@@ -7,3 +7,5 @@ grep -v -- -1 cat_trainval.txt | cut -d " " -f 1 > cats.txt
 for line in $(cat faces.txt); do echo "$line"; done
 for line in $(cat aeroplane.txt); do cp -v  /home/goering/data/images/VOC2010/SegmentationClass/"$line".jpg . ; done
 
+rsync -avz -b --backup-dir=/home/goering/backup  --delete images sigma5:/home/goering/data/
+
