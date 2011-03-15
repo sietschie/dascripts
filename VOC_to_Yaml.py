@@ -33,7 +33,8 @@ obj['mask'] = mat
 dump_stream = yaml.dump(obj, Dumper=yaml.CDumper)
 print "finished dumping.."
 
-dump_stream_fixed = dump_stream.replace("!!python/object:__main__.Matrix", "!!opencv-matrix").replace("!opencv-matrix", "!!opencv-matrix")
+dump_stream_fixed = dump_stream.replace("!opencv-matrix", "!!opencv-matrix").replace("!!python/object:__main__.Matrix", "!!opencv-matrix")
+
 print "finished fixing.."
 
 output = open(out_filename,"w")
