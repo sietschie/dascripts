@@ -1,2 +1,9 @@
 find /home/goering/Downloads/MSRC_ObjCategImageDatabase_v2/GroundTruth/ -name *.bmp -exec ./MSCR_to_Yaml.py {} \;
 find /home/goering/Downloads/VOCdevkit/VOC2010/SegmentationClass/ -name *.png -exec ./VOC_to_Yaml.py {} \;
+
+comm -1 -2  cats.txt ../../fs-SegmentationClass.txt > ../../fs-cats.txt
+grep -v -- -1 cat_trainval.txt | cut -d " " -f 1 > cats.txt
+
+for line in $(cat faces.txt); do echo "$line"; done
+for line in $(cat aeroplane.txt); do cp -v  /home/goering/data/images/VOC2010/SegmentationClass/"$line".jpg . ; done
+
