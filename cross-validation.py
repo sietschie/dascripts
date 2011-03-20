@@ -30,9 +30,9 @@ def main():
     print "list_of_imagelists:", list_of_imagelists
 
     global binary_learn
-    binary_learn = binary_directory + "/learn.bin"
+    binary_learn = binary_directory + "/build/learn.bin"
     global binary_test
-    binary_test = binary_directory + "/test.bin"
+    binary_test = binary_directory + "/build/test.bin"
     global binary_test_options
     binary_test_options = ["-m","2"]
 
@@ -62,7 +62,8 @@ def main():
         'fgd KL sym',
         'bgd KL input result',
         'bgd KL result input',
-        'bgd KL sym'
+        'bgd KL sym', 
+        'ownclass'
     ])
 
     imagelists = []
@@ -98,7 +99,18 @@ def main():
         for image in imagelist['list']:
             validate(imagelists, image, imagelist['classnumber'])
 
-def compute_model(imagelist, suffix, validation_image, validation_class):
+    scriptpath = os.path.abspath(sys.argv[0])
+    statisticspath = os.path.dirname(scriptpath) + "/compute_statistics.py"
+    args = [ statisticspath, output_directory + "/results"]
+    print " ".join(args)
+    p = subprocess.Popen(args, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    p.wait()
+    (output, error) = p.communicate()
+    print "output: ", output
+    f = open(output_directory + "/summary", "w")
+    f.write(output)
+
+def compute_model(imagelist, suffix, validation_image, validation_class, ownclass):
     #print
     #print "suffix: ", suffix
     #print "compute model: ", imagelist
@@ -112,14 +124,14 @@ def compute_model(imagelist, suffix, validation_image, validation_class):
     args.extend( imagesstrings )
 
     logfile.write( " ".join(args) + "\n" )
+    print " ".join(args)
     start_time = time.time()
     p = subprocess.Popen(args, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     p.wait()
     end_time = time.time()
     print "running_time: ", end_time - start_time
     (output, error) = p.communicate()
-    print " ".join(args)
-    #print "output: ", output
+    print "output: ", output
     #print "error: ", error
 
     logfile.write( "running_time: " + str(end_time - start_time) + "\n" )
@@ -140,6 +152,7 @@ def compute_model(imagelist, suffix, validation_image, validation_class):
     end_time = time.time()
     print "running_time: ", end_time - start_time
     (output, error) = p.communicate()
+    print "output: ", output
     lines = output.split("\n")[-3:-1]
     output_var = {}
 
@@ -179,18 +192,19 @@ def compute_model(imagelist, suffix, validation_image, validation_class):
         output_var['bgd KL input result'],
         output_var['bgd KL result input'],
         output_var['bgd KL sym'],
+        ownclass
     ])
 
 
 def validate(imagelists, validation_image, validation_class):
     for imagelist in imagelists:
         if validation_class != imagelist['classnumber']:
-            compute_model(imagelist, ".all", validation_image, validation_class)
+            compute_model(imagelist, ".all", validation_image, validation_class, 0)
         else:
             print "remove image: ", validation_image
             tmp_imagelist = copy.deepcopy( imagelist )
             tmp_imagelist['list'].remove(validation_image)
-            compute_model(tmp_imagelist,".wo-%s"%".".join(validation_image.split(".")[0:-1]), validation_image, validation_class)
+            compute_model(tmp_imagelist,".wo-%s"%".".join(validation_image.split(".")[0:-1]), validation_image, validation_class, 1)
             
 if __name__ == "__main__":
     main()
