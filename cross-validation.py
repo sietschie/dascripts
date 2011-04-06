@@ -30,9 +30,9 @@ def main():
     print "list_of_imagelists:", list_of_imagelists
 
     global binary_learn
-    binary_learn = binary_directory + "/build/learn.bin"
+    binary_learn = binary_directory + "/learn.bin"
     global binary_test
-    binary_test = binary_directory + "/build/test.bin"
+    binary_test = binary_directory + "/test.bin"
     global binary_test_options
     binary_test_options = ["-m","2"]
 
