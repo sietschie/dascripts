@@ -34,7 +34,8 @@ def main():
     global binary_test
     binary_test = binary_directory + "/test.bin"
     global binary_test_options
-    binary_test_options = ["-m","2"]
+    #binary_test_options = ["-m","2"]
+    binary_test_options = []
 
     global logfile
     logfile = open(output_directory + "/log","a",1)
