@@ -42,10 +42,7 @@ def main():
     logfile.write(str( sys.argv ) + "\n")
     logfile.write(" ".join(sys.argv))
 
-    global resultsfile
-    resultsfile = csv.writer(open(output_directory + "/results","a",1))
-
-    resultsfile.writerow([ 
+    fieldnames = [ 
         "image name", 
         "image class", 
         "model", 
@@ -54,7 +51,7 @@ def main():
         'true positive',
         'false negative',
         'false positive',
-        'unknown pixels',
+        'unknown',
         'bgd',
         'fgd',
         'joint',
@@ -70,8 +67,25 @@ def main():
         'prob bgd KL input result',
         'prob bgd KL result input',
         'prob bgd KL sym', 
+        'msst fgd KL input result',
+        'msst fgd KL result input',
+        'msst fgd KL sym',
+        'msst bgd KL input result',
+        'msst bgd KL result input',
+        'msst bgd KL sym', 
+        'msst prob fgd KL input result',
+        'msst prob fgd KL result input',
+        'msst prob fgd KL sym',
+        'msst prob bgd KL input result',
+        'msst prob bgd KL result input',
+        'msst prob bgd KL sym', 
+        'xi',
         'ownclass'
-    ])
+    ]
+
+    global resultsfile
+    resultsfile = csv.DictWriter(open(output_directory + "/results","a",1), fieldnames)
+    resultsfile.writerow(dict(zip(fieldnames, fieldnames)))
 
     imagelists = []
     for imagelist in list_of_imagelists:
@@ -175,12 +189,21 @@ def compute_model(imagelist, suffix, validation_image, validation_class, ownclas
             name = arg.split(":")[0].strip()
             value = arg.split(":")[1].strip()
             output_var[name] = value
+
+    output_var["image name"] = validation_image
+    output_var["image class"] = validation_class 
+    output_var["model"] = suffix
+    output_var["model class"] = imagelist['classnumber']
+    output_var["ownclass"] = ownclass
+
     print "output: ", output_var
     print "error: ", error
     logfile.write(str(output_var) + "\n")
     logfile.write("\n\n")
 
-    resultsfile.writerow([ 
+    resultsfile.writerow(output_var)
+
+"""    resultsfile.writerow([ 
         validation_image, 
         validation_class, 
         suffix, 
@@ -206,7 +229,7 @@ def compute_model(imagelist, suffix, validation_image, validation_class, ownclas
         output_var['prob bgd KL result input'],
         output_var['prob bgd KL sym'],
         ownclass
-    ])
+    ])"""
 
 
 def validate(imagelists, validation_image, validation_class):

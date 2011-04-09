@@ -53,6 +53,53 @@ def main():
     print "correlation prob bgd KL ir: ", correlation(correct_class, prob_bgd_ir_class) 
     print "correlation prob bgd KL ri: ", correlation(correct_class, prob_bgd_ri_class) 
 
+
+    list_by_images = {}
+
+    for elem in data:
+        im = elem['image name']
+        if not im in list_by_images.keys():
+            list_by_images[im] = []
+        list_by_images[im].append(elem)
+
+    relevant_keys = [ elem for elem in data[0].keys() if "prob" in elem ]
+    #relevant_keys = ['prob fgd KL sym']
+
+    multiclass_results = {}
+    for key in relevant_keys:
+        multiclass_results[key] = []
+        for elem in list_by_images:
+            #print elem
+            res = compute_multiclass_result(list_by_images[elem], key)
+            multiclass_results[key].append(res)
+
+    multiclass_results_avg = {}
+    for key in relevant_keys:
+        avg = sum( multiclass_results[key] ) / len( multiclass_results[key] )
+        if avg != -1:
+            #print key, " - ", multiclass_results[key]
+            print key, avg
+
+
+def compute_multiclass_result(image_data, key):
+    probs = {}
+
+    try:
+
+        for elem in image_data:
+            #print key, " - ", elem[key], " - ", elem['model class'], " - ", elem['ownclass']
+            probs[ float( elem['ownclass'] ) ] = float( elem[key] )
+
+        inverse_probs = [(value, key) for key, value in probs.items()]
+
+        resulting_class = max(inverse_probs)[1]
+        #print "probs = ", probs
+        #print "resulting_class = ", resulting_class
+
+        return resulting_class
+    except ValueError:
+        return -1
+
 def correlation(a, b):
     mean_a = sum(a)/len(a)
     mean_b = sum(b)/len(b)
