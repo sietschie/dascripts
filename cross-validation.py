@@ -130,6 +130,8 @@ def main():
     print "output: ", output
     f = open(output_directory + "/summary", "w")
     f.write(output)
+    f.write("\n\n ERRORS:\n")
+    f.write(error)
 
 def compute_model(imagelist, suffix, validation_image, validation_class, ownclass):
     #print
