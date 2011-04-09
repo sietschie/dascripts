@@ -34,8 +34,8 @@ def main():
     global binary_test
     binary_test = binary_directory + "/test.bin"
     global binary_test_options
-    #binary_test_options = ["-m","2"]
-    binary_test_options = []
+    binary_test_options = ["-m","10"]
+	#binary_test_options = []
 
     global logfile
     logfile = open(output_directory + "/log","a",1)
@@ -64,6 +64,12 @@ def main():
         'bgd KL input result',
         'bgd KL result input',
         'bgd KL sym', 
+        'porb fgd KL input result',
+        'porb fgd KL result input',
+        'porb fgd KL sym',
+        'porb bgd KL input result',
+        'porb bgd KL result input',
+        'porb bgd KL sym', 
         'ownclass'
     ])
 
@@ -193,6 +199,12 @@ def compute_model(imagelist, suffix, validation_image, validation_class, ownclas
         output_var['bgd KL input result'],
         output_var['bgd KL result input'],
         output_var['bgd KL sym'],
+        output_var['prob fgd KL input result'],
+        output_var['prob fgd KL result input'],
+        output_var['prob fgd KL sym'],
+        output_var['prob bgd KL input result'],
+        output_var['prob bgd KL result input'],
+        output_var['prob bgd KL sym'],
         ownclass
     ])
 
