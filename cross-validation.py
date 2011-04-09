@@ -64,12 +64,12 @@ def main():
         'bgd KL input result',
         'bgd KL result input',
         'bgd KL sym', 
-        'porb fgd KL input result',
-        'porb fgd KL result input',
-        'porb fgd KL sym',
-        'porb bgd KL input result',
-        'porb bgd KL result input',
-        'porb bgd KL sym', 
+        'prob fgd KL input result',
+        'prob fgd KL result input',
+        'prob fgd KL sym',
+        'prob bgd KL input result',
+        'prob bgd KL result input',
+        'prob bgd KL sym', 
         'ownclass'
     ])
 
