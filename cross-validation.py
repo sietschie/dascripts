@@ -163,7 +163,7 @@ def compute_model(imagelist, suffix, validation_image, validation_class, ownclas
     logfile.write("\n")
 
 
-    args_test = [binary_test, outputstring, str(validation_class), imagelist['directory'] + "/" + validation_image, outputstring + validation_image + ".yml"]
+    args_test = [binary_test, outputstring, str(validation_class), imagelist['directory'] + "/" + validation_image, outputstring + ".tested-with." + validation_image + ".yml"]
     args_test.extend(binary_test_options)
 
 
