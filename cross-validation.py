@@ -14,16 +14,16 @@ image_directories['VOC'] = "/home/goering/data/images/VOC2010/SegmentationClass/
 
 
 def main():
-    if( len(sys.argv) < 3 ):
-        print "not enough arguments: binary_dir output_dir image_list1 [image_list2 ...]"
+    if( len(sys.argv) < 4 ):
+        print "not enough arguments: binary_dir output_dir output_suffix image_list1 [image_list2 ...]"
         exit() #todo: output some helpful information?
 
     binary_directory = sys.argv[1]
     global output_directory 
-    output_directory = sys.argv[2] + "/" + os.path.basename(binary_directory.strip('/')) + "-" + str(datetime.datetime.now()).replace(" ","-").replace(".","-").replace(":","-")
+    output_directory = sys.argv[2] + "/" + os.path.basename(binary_directory.strip('/')) + "-" + sys.argv[2]+ "-" + str(datetime.datetime.now()).replace(" ","-").replace(".","-").replace(":","-")
     os.mkdir(output_directory)
 
-    list_of_imagelists = sys.argv[3:]
+    list_of_imagelists = sys.argv[4:]
 
     print "binary_dir:", binary_directory
     print "output_dir:", output_directory
