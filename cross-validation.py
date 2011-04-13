@@ -20,7 +20,7 @@ def main():
 
     binary_directory = sys.argv[1]
     global output_directory 
-    output_directory = sys.argv[2] + "/" + os.path.basename(binary_directory.strip('/')) + "-" + sys.argv[2]+ "-" + str(datetime.datetime.now()).replace(" ","-").replace(".","-").replace(":","-")
+    output_directory = sys.argv[2] + "/" + os.path.basename(binary_directory.strip('/')) + "-" + sys.argv[3]+ "-" + str(datetime.datetime.now()).replace(" ","-").replace(".","-").replace(":","-")
     os.mkdir(output_directory)
 
     list_of_imagelists = sys.argv[4:]
