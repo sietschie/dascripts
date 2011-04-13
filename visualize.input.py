@@ -2,27 +2,18 @@
 import Image
 import sys
 import yaml
-import os
 
 def main():
     if len(sys.argv) < 2:
-        print "usage: script testoutput1.yml testoutput2.yml ..."
-        print "or  script testoutputdir"
+        print "usage: script input1.bmp.yml input2.bmp.yml ..."
         return
 
-    if len(sys.argv) == 2 and os.path.isdir(sys.argv[1]):
-            allfiles = os.listdir(sys.argv[1])
-            outputfiles = [sys.argv[1] + item for item in allfiles if ".tested-with." in item]
-            #print "THE INPUT IS A DIRECTORY", outputfiles
-            in_filenames = outputfiles
-    else:
-        in_filenames = sys.argv[1:]
-
+    in_filenames = sys.argv[1:]
 
     for filename in in_filenames:
         create_all_bgdfgd_image(filename)
 
-def create_bgdfgd_image(in_filename, input_image, mask, suffix):
+def create_bgdfgd_image(in_filename, input_image, mask):
     output_fgd = Image.new("RGB", (mask['cols'], mask['rows']))
     output_bgd = Image.new("RGB", (mask['cols'], mask['rows']))
 
@@ -42,11 +33,11 @@ def create_bgdfgd_image(in_filename, input_image, mask, suffix):
                 output_fgd.putpixel((x,y), (255,0,255))
             
 
-    output_fgd.save(in_filename + '.' + suffix + '.fgd.png')
-    output_bgd.save(in_filename + '.' + suffix + '.bgd.png')
+    output_fgd.save(in_filename + '.fgd.png')
+    output_bgd.save(in_filename + '.bgd.png')
 
 
-def create_bgdfgd_image_multiclass(in_filename, input_image, mask, suffix, class_number):
+def create_bgdfgd_image_multiclass(in_filename, input_image, mask, class_number):
     output_fgd = Image.new("RGB", (mask['cols'], mask['rows']))
     output_bgd = Image.new("RGB", (mask['cols'], mask['rows']))
 
@@ -66,8 +57,8 @@ def create_bgdfgd_image_multiclass(in_filename, input_image, mask, suffix, class
                 output_fgd.putpixel((x,y), (255,0,255))
             
 
-    output_fgd.save(in_filename + '.' + suffix + '.fgd.png')
-    output_bgd.save(in_filename + '.' + suffix + '.bgd.png')
+    output_fgd.save(in_filename + '.fgd.png')
+    output_bgd.save(in_filename + '.bgd.png')
 
 def create_all_bgdfgd_image(in_filename):
     print in_filename
@@ -86,41 +77,12 @@ def create_all_bgdfgd_image(in_filename):
 
     yamlfile = yaml.load(stream)
 
-    input_image_filename = yamlfile['input_image']
+    input_image_filename = '.'.join(in_filename.split('.')[0:-1])
     input_image = Image.open(input_image_filename)
 
     mask = yamlfile['mask']
-    create_bgdfgd_image(in_filename, input_image, mask, 'mask')
+    create_bgdfgd_image_multiclass(in_filename, input_image, mask, 11)
 
-    initial_mask = yamlfile['initial_mask']
-    create_bgdfgd_image(in_filename, input_image, initial_mask, 'initial_mask')
-
-    try:
-        initial_mask = yamlfile['initial_mask_color']
-        create_bgdfgd_image(in_filename, input_image, initial_mask, 'initial_mask_color')
-    except KeyError:
-        pass
-
-    try:
-        initial_mask = yamlfile['initial_mask_msst']
-        create_bgdfgd_image(in_filename, input_image, initial_mask, 'initial_mask_msst')
-    except KeyError:
-        pass
-
-    gt_mask_filename = input_image_filename + ".yml"
-
-    try:
-        stream = open(gt_mask_filename)
-    except IOError:
-        parser.error("can't open input file \""+ gt_mask_filename +"\"")
-
-
-    if ".wo-" in in_filename:
-        class_number = int( in_filename.split('.')[1] )
-
-        yamlfile = yaml.load(stream)
-        mask = yamlfile['mask']
-        create_bgdfgd_image_multiclass(in_filename, input_image, mask, 'gt_mask', class_number)
 
 if __name__ == "__main__":
     main()
