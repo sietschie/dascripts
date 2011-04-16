@@ -146,7 +146,7 @@ def create_all_bgdfgd_image(in_filename):
     html_summary.append("<p> prob fgd KL sym = %s </p>" % prob_fgd_KL_sym)
 
     try:
-        msst_prob_fgd_KL_sym = yamlfile["msst_prob fgd KL sym"]
+        msst_prob_fgd_KL_sym = yamlfile["msst prob fgd KL sym"]
         xi = yamlfile["xi"]
         html_summary.append("<p> msst prob fgd KL sym = %s </p>" % msst_prob_fgd_KL_sym)
         html_summary.append("<p> xi = %s </p>" % xi)
