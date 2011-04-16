@@ -25,7 +25,7 @@ def main():
 
     html_summary.append("</p>")
 
-    html_summary.append("<div style=\"width: 3000px\" ><table>")
+    html_summary.append("<div style=\"width: 4000px\" ><table>")
 
     in_filenames_tuples = [ (name.split(".tested-with.")[-1], name) for name in in_filenames ]
 

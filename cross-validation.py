@@ -134,7 +134,7 @@ def main():
     #f.write(error)
 
     visualizepath = os.path.dirname(scriptpath) + "/visualize.test-output.summary.py"
-    args = [ statisticspath, output_directory + "/"]
+    args = [ visualizepath, output_directory + "/"]
     print " ".join(args)
     p = subprocess.Popen(args, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     p.wait()
