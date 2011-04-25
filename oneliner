@@ -12,3 +12,8 @@ rsync -avz -b --backup-dir=/home/goering/backup  --delete  sigma5:/home/goering/
 
 ./cross-validation.py ~/code/grabcut/naive ~/data/output/test/ ~/data/images/flowersandfaces/*txt
 
+cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ ../src/
+
+rename 's/.refined//' *refined*
+
+
