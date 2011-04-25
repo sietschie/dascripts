@@ -14,10 +14,13 @@ def main():
     for l in datafile:
         data.append(l)
 
+    image_classes = []
     joint_rates = []
     for l in data:
         if l['model class'] == l['image class']:
             joint_rates.append( float(l['joint']))
+        if l['image class'] not in image_classes:
+            image_classes.append(l['image class'])
 
     #print joint_rates
 
@@ -76,6 +79,29 @@ def main():
     multiclass_results_avg = {}
     for key in relevant_keys:
         avg = sum( multiclass_results[key] ) / len( multiclass_results[key] )
+        if avg != -1:
+            #print key, " - ", multiclass_results[key]
+            print key, avg
+
+
+    relevant_perclass_keys = []
+    for image_class in image_classes:
+        relevant_perclass_keys.extend([(image_class, elem) for elem in relevant_keys])
+
+    multiclass_perclass_results = {}
+    for key in relevant_perclass_keys:
+        multiclass_perclass_results[key] = []
+        for elem in list_by_images:
+            if list_by_images[elem][0]['image class'] != key[0]:
+                continue
+            res = compute_multiclass_result(list_by_images[elem], key[1])
+            #print key, res
+            multiclass_perclass_results[key].append(res)
+
+    multiclass_perclass_results_avg = {}
+    for key in relevant_perclass_keys:
+        #print key
+        avg = sum( multiclass_perclass_results[key] ) / len( multiclass_perclass_results[key] )
         if avg != -1:
             #print key, " - ", multiclass_results[key]
             print key, avg
