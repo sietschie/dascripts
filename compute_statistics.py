@@ -34,12 +34,12 @@ def main():
     bgd_ir_class = [float(elem['bgd KL input result']) for elem in data]
     bgd_ri_class = [float(elem['bgd KL result input']) for elem in data]
     
-    print "correlation fgd KL sym: ", correlation(correct_class, fgd_sym_class) 
-    print "correlation fgd KL ir: ", correlation(correct_class, fgd_ir_class) 
-    print "correlation fgd KL ri: ", correlation(correct_class, fgd_ri_class) 
-    print "correlation bgd KL sym: ", correlation(correct_class, bgd_sym_class) 
-    print "correlation bgd KL ir: ", correlation(correct_class, bgd_ir_class) 
-    print "correlation bgd KL ri: ", correlation(correct_class, bgd_ri_class) 
+    #print "correlation fgd KL sym: ", correlation(correct_class, fgd_sym_class) 
+    #print "correlation fgd KL ir: ", correlation(correct_class, fgd_ir_class) 
+    #print "correlation fgd KL ri: ", correlation(correct_class, fgd_ri_class) 
+    #print "correlation bgd KL sym: ", correlation(correct_class, bgd_sym_class) 
+    #print "correlation bgd KL ir: ", correlation(correct_class, bgd_ir_class) 
+    #print "correlation bgd KL ri: ", correlation(correct_class, bgd_ri_class) 
 
 
     prob_fgd_sym_class = [float(elem['prob fgd KL sym']) for elem in data]
@@ -49,12 +49,12 @@ def main():
     prob_bgd_ir_class = [float(elem['prob bgd KL input result']) for elem in data]
     prob_bgd_ri_class = [float(elem['prob bgd KL result input']) for elem in data]
     
-    print "correlation prob fgd KL sym: ", correlation(correct_class, prob_fgd_sym_class) 
-    print "correlation prob fgd KL ir: ", correlation(correct_class, prob_fgd_ir_class) 
-    print "correlation prob fgd KL ri: ", correlation(correct_class, prob_fgd_ri_class) 
-    print "correlation prob bgd KL sym: ", correlation(correct_class, prob_bgd_sym_class) 
-    print "correlation prob bgd KL ir: ", correlation(correct_class, prob_bgd_ir_class) 
-    print "correlation prob bgd KL ri: ", correlation(correct_class, prob_bgd_ri_class) 
+    #print "correlation prob fgd KL sym: ", correlation(correct_class, prob_fgd_sym_class) 
+    #print "correlation prob fgd KL ir: ", correlation(correct_class, prob_fgd_ir_class) 
+    #print "correlation prob fgd KL ri: ", correlation(correct_class, prob_fgd_ri_class) 
+    #print "correlation prob bgd KL sym: ", correlation(correct_class, prob_bgd_sym_class) 
+    #print "correlation prob bgd KL ir: ", correlation(correct_class, prob_bgd_ir_class) 
+    #print "correlation prob bgd KL ri: ", correlation(correct_class, prob_bgd_ri_class) 
 
 
     list_by_images = {}
