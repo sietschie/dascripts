@@ -130,8 +130,17 @@ def main():
     print "output: ", output
     f = open(output_directory + "/summary", "w")
     f.write(output)
-    f.write("\n\n ERRORS:\n")
-    f.write(error)
+    #f.write("\n\n ERRORS:\n")
+    #f.write(error)
+
+    visualizepath = os.path.dirname(scriptpath) + "/visualize.test-output.summary.py"
+    args = [ visualizepath, output_directory + "/"]
+    print " ".join(args)
+    p = subprocess.Popen(args, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    p.wait()
+    (output, error) = p.communicate()
+    print "output: ", output
+    print "error: ", error
 
 def compute_model(imagelist, suffix, validation_image, validation_class, ownclass):
     #print
