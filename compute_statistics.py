@@ -16,15 +16,20 @@ def main():
 
     image_classes = []
     joint_rates = []
+    per_class_joint_rates = []
     for l in data:
         if l['model class'] == l['image class']:
-            joint_rates.append( float(l['joint']))
+            joint_rates.append(  float(l['joint']))
+            per_class_joint_rates.append( ( l['image class'], float(l['joint'])))
         if l['image class'] not in image_classes:
             image_classes.append(l['image class'])
 
     #print joint_rates
 
     print 'mean joint probability: ', sum(joint_rates) / len(joint_rates)
+    for rel_class in image_classes:
+	one_class_joint_rates = [ prob for (cur_class, prob) in per_class_joint_rates if cur_class == rel_class ]
+	print 'mean joint probability class %s: ' % rel_class, sum(one_class_joint_rates) / len(one_class_joint_rates)
 
     correct_class = [float(elem['ownclass']) for elem in data]
     fgd_sym_class = [float(elem['fgd KL sym']) for elem in data]
