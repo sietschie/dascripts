@@ -20,7 +20,8 @@ def main():
 
     binary_directory = sys.argv[1]
     global output_directory 
-    output_directory = sys.argv[2] + "/" + os.path.basename(binary_directory.strip('/')) + "-" + sys.argv[3]+ "-" + str(datetime.datetime.now()).replace(" ","-").replace(".","-").replace(":","-")
+    timestring = str(datetime.datetime.now()).replace(" ","-").replace(".","-").replace(":","-")
+    output_directory = sys.argv[2] + "/" + os.path.basename(binary_directory.strip('/')) + "-" + sys.argv[3]+ "-" + timestring
     os.mkdir(output_directory)
 
     list_of_imagelists = sys.argv[4:]
@@ -80,13 +81,16 @@ def main():
         'msst prob bgd KL result input',
         'msst prob bgd KL sym', 
         'xi',
-        'ownclass'
+        'ownclass',
+		'prob humoments'
     ]
 
+    # prepare file to output results
     global resultsfile
     resultsfile = csv.DictWriter(open(output_directory + "/results","a",1), fieldnames)
     resultsfile.writerow(dict(zip(fieldnames, fieldnames)))
 
+    # read imagelist from files
     imagelists = []
     for imagelist in list_of_imagelists:
         il = {}
@@ -105,21 +109,18 @@ def main():
 
         imagelists.append(il)
 
+    # precompute models for the complete lists
+    for imagelist in imagelists:
+        compute_model(imagelist, ".all" )
 
-    #for imagelist in imagelists:
-    #    print imagelist
-    #    for image in imagelist['list']:
-    #        print image
-
-
-    #print imagelists
-
-    #validate(imagelists, imagelists[0]['list'][0], imagelists[0]['classnumber'])
-
+    # process imagelist
     for imagelist in imagelists:
         for image in imagelist['list']:
             validate(imagelists, image, imagelist['classnumber'])
 
+    # after crossvalidating with all images, run some scripts
+
+    # compute some general statistics
     scriptpath = os.path.abspath(sys.argv[0])
     statisticspath = os.path.dirname(scriptpath) + "/compute_statistics.py"
     args = [ statisticspath, output_directory + "/results"]
@@ -133,6 +134,7 @@ def main():
     #f.write("\n\n ERRORS:\n")
     #f.write(error)
 
+    # generate html file
     visualizepath = os.path.dirname(scriptpath) + "/visualize.test-output.summary.py"
     args = [ visualizepath, output_directory + "/"]
     print " ".join(args)
@@ -142,19 +144,19 @@ def main():
     print "output: ", output
     print "error: ", error
 
-def compute_model(imagelist, suffix, validation_image, validation_class, ownclass):
-    #print
-    #print "suffix: ", suffix
-    #print "compute model: ", imagelist
-    #print
-    #print
 
+
+def compute_model(imagelist, suffix ):
+
+    # prepare parameters
     outputstring = output_directory + "/model." + str(imagelist['classnumber']) + suffix + ".yml"
     imagesstrings = [ imagelist['directory'] + "/" + elem for elem in imagelist['list']]
+
     args = [ binary_learn ]
     args.extend( [ outputstring, str(imagelist['classnumber']) ])
     args.extend( imagesstrings )
 
+    # write parameters to logfile and stdout
     logfile.write( " ".join(args) + "\n" )
     print " ".join(args)
     start_time = time.time()
@@ -171,8 +173,11 @@ def compute_model(imagelist, suffix, validation_image, validation_class, ownclas
     logfile.write(error)
     logfile.write("\n")
 
+    return outputstring
 
-    args_test = [binary_test, outputstring, str(validation_class), imagelist['directory'] + "/" + validation_image, outputstring + ".tested-with." + validation_image + ".yml"]
+
+def validateImage( validation_image, image_directory, outputstring, validation_class ):
+    args_test = [binary_test, outputstring, str(validation_class), image_directory + "/" + validation_image, outputstring + ".tested-with." + validation_image + ".yml"]
     args_test.extend(binary_test_options)
 
 
@@ -185,6 +190,7 @@ def compute_model(imagelist, suffix, validation_image, validation_class, ownclas
     print "running_time: ", end_time - start_time
     (output, error) = p.communicate()
     print "output: ", output
+    print "error: ", error
     lines = output.split("\n")[-3:-1]
     output_var = {}
 
@@ -201,57 +207,41 @@ def compute_model(imagelist, suffix, validation_image, validation_class, ownclas
             value = arg.split(":")[1].strip()
             output_var[name] = value
 
-    output_var["image name"] = validation_image
-    output_var["image class"] = validation_class 
-    output_var["model"] = suffix
-    output_var["model class"] = imagelist['classnumber']
-    output_var["ownclass"] = ownclass
-
-    print "output: ", output_var
-    print "error: ", error
-    logfile.write(str(output_var) + "\n")
-    logfile.write("\n\n")
-
-    resultsfile.writerow(output_var)
-
-"""    resultsfile.writerow([ 
-        validation_image, 
-        validation_class, 
-        suffix, 
-        imagelist['classnumber'],
-        output_var['true negative'],
-        output_var['true positive'],
-        output_var['false negative'],
-        output_var['false positive'],
-        output_var['unknown'],
-        output_var['bgd'],
-        output_var['fgd'],
-        output_var['joint'],
-        output_var['fgd KL input result'],
-        output_var['fgd KL result input'],
-        output_var['fgd KL sym'],
-        output_var['bgd KL input result'],
-        output_var['bgd KL result input'],
-        output_var['bgd KL sym'],
-        output_var['prob fgd KL input result'],
-        output_var['prob fgd KL result input'],
-        output_var['prob fgd KL sym'],
-        output_var['prob bgd KL input result'],
-        output_var['prob bgd KL result input'],
-        output_var['prob bgd KL sym'],
-        ownclass
-    ])"""
+    return output_var
 
 
 def validate(imagelists, validation_image, validation_class):
     for imagelist in imagelists:
+        suffix = ""
+        output_var = {}
+        ownclass = 0
         if validation_class != imagelist['classnumber']:
-            compute_model(imagelist, ".all", validation_image, validation_class, 0)
+            suffix = ".all"
+            modelfile = output_directory + "/model." + str(imagelist['classnumber']) + suffix + ".yml"
+
+            output_var = validateImage( validation_image, imagelist['directory'], modelfile, validation_class )
         else:
             print "remove image: ", validation_image
             tmp_imagelist = copy.deepcopy( imagelist )
             tmp_imagelist['list'].remove(validation_image)
-            compute_model(tmp_imagelist,".wo-%s"%".".join(validation_image.split(".")[0:-1]), validation_image, validation_class, 1)
+
+            ownclass = 1
+            suffix = ".wo-%s"%".".join(validation_image.split(".")[0:-1])
+            modelfile = compute_model(tmp_imagelist, suffix )
+            output_var = validateImage( validation_image, imagelist['directory'], modelfile, validation_class )
             
+        output_var["image name"] = validation_image
+        output_var["image class"] = validation_class 
+        output_var["model"] = suffix
+        output_var["model class"] = imagelist['classnumber']
+        output_var["ownclass"] = ownclass
+
+        print "output: ", output_var
+        logfile.write(str(output_var) + "\n")
+        logfile.write("\n\n")
+
+        resultsfile.writerow(output_var)
+
+
 if __name__ == "__main__":
     main()
