@@ -24,6 +24,12 @@ def main():
         if l['image class'] not in image_classes:
             image_classes.append(l['image class'])
 
+        l['prob fgd KL sym x humoments'] = float(l['prob fgd KL sym']) * float(l['prob humoments'])
+        l['prob fgd KL sym + humoments'] = float(l['prob fgd KL sym']) + float(l['prob humoments'])
+        for factor in [ float(pow(10,x)) for x in range(20,35,5)]:
+            l['prob fgd KL sym + %f humoments' % factor] = float(l['prob fgd KL sym']) + factor * float(l['prob humoments'])
+             
+
     #print joint_rates
 
     print 'mean joint probability: ', sum(joint_rates) / len(joint_rates)
