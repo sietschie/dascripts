@@ -42,6 +42,7 @@ def main():
     logfile = open(output_directory + "/log","a",1)
     logfile.write(str( sys.argv ) + "\n")
     logfile.write(" ".join(sys.argv))
+    logfile.write("\n\n")
 
     fieldnames = [ 
         "image name", 
