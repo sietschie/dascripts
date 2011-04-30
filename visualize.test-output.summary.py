@@ -122,8 +122,8 @@ def create_all_bgdfgd_image(in_filename):
     except IOError:
         parser.error("can't open input file \""+ in_filename +"\"")
 
-    yamlfile = yaml.load(stream)
-
+    yamlfiles = yaml.load_all(stream)
+    yamlfile = yamlfiles.next()
 
     html_summary.append("<td width=\"300\">")
 
