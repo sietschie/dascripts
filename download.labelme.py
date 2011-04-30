@@ -94,7 +94,7 @@ def main():
 		#print "tag = \"%s\"" % tags['name']
 		
                 print 'name: ', repr(tags['name']), '   deleted: ', repr(tags['deleted'])
-		if tags['name'] != None and tags['name'].strip() == searchstring and tags['deleted'].strip() == '0':
+		if tags['name'] != None and searchstring in tags['name'].strip() and tags['deleted'].strip() == '0':
 		    print 'found object...', tags['name']
 		    
 		    list_of_points = []
