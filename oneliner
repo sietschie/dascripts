@@ -16,4 +16,5 @@ cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ ../src/
 
 rename 's/.refined//' *refined*
 
+find . -maxdepth 1 -name \*.jpg -exec ~/code/grabcut/all2/build/outlines2masks/outlines2mask.bin {} 11 \;
 
