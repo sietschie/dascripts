@@ -2,6 +2,7 @@
 import sys
 import yaml
 import os.path
+import os
 import copy
 import subprocess
 import datetime
@@ -36,6 +37,10 @@ def main():
     binary_test = binary_directory + "/test.bin"
     global binary_test_options
     binary_test_options = ["-m","10"]
+
+    build_directory = '/'.join( binary_directory.rstrip('/').split('/')[:-1] )
+    global binary_shape
+    binary_shape = build_directory + "/shapes/shape.bin"
 	#binary_test_options = []
 
     global logfile
@@ -178,7 +183,8 @@ def compute_model(imagelist, suffix ):
 
 
 def validateImage( validation_image, image_directory, outputstring, validation_class ):
-    args_test = [binary_test, outputstring, str(validation_class), image_directory + "/" + validation_image, outputstring + ".tested-with." + validation_image + ".yml"]
+    outputfile = outputstring + ".tested-with." + validation_image + ".yml"
+    args_test = [binary_test, outputstring, str(validation_class), image_directory + "/" + validation_image, outputfile]
     args_test.extend(binary_test_options)
 
 
@@ -208,19 +214,20 @@ def validateImage( validation_image, image_directory, outputstring, validation_c
             value = arg.split(":")[1].strip()
             output_var[name] = value
 
-    return output_var
+    return (output_var, outputfile)
 
 
 def validate(imagelists, validation_image, validation_class):
     for imagelist in imagelists:
         suffix = ""
         output_var = {}
+        outputfile = ""
         ownclass = 0
         if validation_class != imagelist['classnumber']:
             suffix = ".all"
             modelfile = output_directory + "/model." + str(imagelist['classnumber']) + suffix + ".yml"
 
-            output_var = validateImage( validation_image, imagelist['directory'], modelfile, validation_class )
+            (output_var, outputfile) = validateImage( validation_image, imagelist['directory'], modelfile, validation_class )
         else:
             print "remove image: ", validation_image
             tmp_imagelist = copy.deepcopy( imagelist )
@@ -229,13 +236,28 @@ def validate(imagelists, validation_image, validation_class):
             ownclass = 1
             suffix = ".wo-%s"%".".join(validation_image.split(".")[0:-1])
             modelfile = compute_model(tmp_imagelist, suffix )
-            output_var = validateImage( validation_image, imagelist['directory'], modelfile, validation_class )
+            (output_var, outputfile) = validateImage( validation_image, imagelist['directory'], modelfile, validation_class )
             
         output_var["image name"] = validation_image
         output_var["image class"] = validation_class 
         output_var["model"] = suffix
         output_var["model class"] = imagelist['classnumber']
         output_var["ownclass"] = ownclass
+
+        args = [binary_shape, outputfile]
+        print " ".join(args)
+        p = subprocess.Popen(args, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+        p.wait()
+        (output, error) = p.communicate()
+        print "output: ", output
+        print "error: ", error
+
+        lastline = output.split('\n')[-2]
+        print lastline
+        name = lastline.split(":")[0].strip()
+        value = lastline.split(":")[1].strip()
+        print name, ": ", value
+        output_var[ name] = value
 
         print "output: ", output_var
         logfile.write(str(output_var) + "\n")
